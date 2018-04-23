@@ -1,6 +1,7 @@
 import numpy as np
 from physics_sim import PhysicsSim
 
+
 class Task():
     """Task (environment) that defines the goal and provides feedback to the agent."""
     def __init__(self, init_pose=None, init_velocities=None, 
@@ -46,3 +47,7 @@ class Task():
         """Reset the sim to start a new episode."""
         self.sim.reset()
         return np.concatenate([self.sim.pose] * self.action_repeat) 
+
+
+class MyTask(Task):
+    pass
