@@ -52,7 +52,5 @@ class PolicyDrivenAgent:
         self.w = self.w + self.noise_scale * np.random.normal(size=self.w.shape)  # equal noise in all directions
 
 
-class ModifiedAgent(PolicyDrivenAgent):
-    """Reinforcement Learning agent that learns using DDPG."""
-    def __init__(self, task):
-        PolicyDrivenAgent.__init__(self, task=task)
+class ActorCriticAgent:
+    pass
