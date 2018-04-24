@@ -8,11 +8,9 @@ from agents.helpers.episode_learner_store import EpisodeLearnerStore
 
 class DDPG():
     """Reinforcement Learning agent that learns using DDPG."""
-    def __init__(self, task,
-                 actor_learning_rate=0.001, critic_learning_rate=0.001,
-                 tau=0.01, gamma=0.99,
-                 buffer_size=100000, batch_size=64,
-                 exploration_mu=0, exploration_theta=0.15, exploration_sigma=0.2):
+    def __init__(self, task, actor_learning_rate=0.005, critic_learning_rate=0.001, tau=0.01, gamma=0.9,
+                 buffer_size=50000, batch_size=64, exploration_mu=0.05, exploration_theta=0.1, exploration_sigma=0.1):
+
         self.task = task
         self.state_size = task.state_size
         self.action_size = task.action_size
@@ -25,7 +23,7 @@ class DDPG():
 
         # Critic (Value) Model
         self.critic_local = Critic(self.state_size, self.action_size, critic_learning_rate)
-        self.critic_target = Critic(self.state_size, self.action_size,critic_learning_rate)
+        self.critic_target = Critic(self.state_size, self.action_size, critic_learning_rate)
 
         # Initialize target model parameters with local model parameters
         self.critic_target.model.set_weights(self.critic_local.model.get_weights())
