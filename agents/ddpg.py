@@ -1,9 +1,8 @@
 import numpy as np
-from agents.helpers.noise_generator import NoiseGenerator
 
-from agents.actor import Actor
-from agents.critic import Critic
-from agents.helpers.episode_learner_store import EpisodeLearnerStore
+from agents.helpers import EpisodeLearnerStore, NoiseGenerator
+from agents.models.fully_connected_actor_model import FullyConnectedActorModel
+from agents.models.double_fully_conncted_layers_critic_model import DoubleFullyConnctedlayersCriticModel
 
 
 class DDPG():
@@ -18,12 +17,12 @@ class DDPG():
         self.action_high = task.action_high
 
         # Actor (Policy) Model
-        self.actor_local = Actor(self.state_size, self.action_size, self.action_low, self.action_high, actor_learning_rate)
-        self.actor_target = Actor(self.state_size, self.action_size, self.action_low, self.action_high, actor_learning_rate)
+        self.actor_local = FullyConnectedActorModel(self.state_size, self.action_size, self.action_low, self.action_high, actor_learning_rate)
+        self.actor_target = FullyConnectedActorModel(self.state_size, self.action_size, self.action_low, self.action_high, actor_learning_rate)
 
         # Critic (Value) Model
-        self.critic_local = Critic(self.state_size, self.action_size, critic_learning_rate)
-        self.critic_target = Critic(self.state_size, self.action_size, critic_learning_rate)
+        self.critic_local = DoubleFullyConnctedlayersCriticModel(self.state_size, self.action_size, critic_learning_rate)
+        self.critic_target = DoubleFullyConnctedlayersCriticModel(self.state_size, self.action_size, critic_learning_rate)
 
         # Initialize target model parameters with local model parameters
         self.critic_target.model.set_weights(self.critic_local.model.get_weights())
