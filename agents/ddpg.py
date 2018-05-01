@@ -77,8 +77,6 @@ class DDPG():
         dones = np.array([e.done for e in experiences if e is not None]).astype(np.uint8).reshape(-1, 1)
         next_states = np.vstack([e.next_state for e in experiences if e is not None])
 
-        # Get predicted next-state actions and Q values from target models
-        #     Q_targets_next = critic_target(next_state, actor_target(next_state))
         actions_next = self.actor_target.model.predict_on_batch(next_states)
         Q_targets_next = self.critic_target.model.predict_on_batch([next_states, actions_next])
 
@@ -90,16 +88,13 @@ class DDPG():
         action_gradients = np.reshape(self.critic_local.get_action_gradients([states, actions, 0]), (-1, self.action_size))
         self.actor_local.train_fn([states, action_gradients, 1])  # custom training function
 
-        # Soft-update target models
-        self.soft_update(self.critic_local.model, self.critic_target.model)
-        self.soft_update(self.actor_local.model, self.actor_target.model)   
+        self.update(self.critic_local.model, self.critic_target.model)
+        self.update(self.actor_local.model, self.actor_target.model)
 
-    def soft_update(self, local_model, target_model):
+    def update(self, local_model, target_model):
         """Soft update model parameters."""
         local_weights = np.array(local_model.get_weights())
         target_weights = np.array(target_model.get_weights())
-
-        assert len(local_weights) == len(target_weights), "Local and target model parameters must have the same size"
 
         new_weights = self.tau * local_weights + (1 - self.tau) * target_weights
         target_model.set_weights(new_weights)

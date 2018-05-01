@@ -31,6 +31,7 @@ class PolicyDrivenAgent:
 
     def step(self, reward, done):
         self.count += 1
+        print(reward)
         self.total_reward = self.total_reward * self.reward_decay + reward
 
         if done: # Learn, if at end of episode
