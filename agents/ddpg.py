@@ -38,7 +38,8 @@ class DDPG():
         self.buffer_size = buffer_size
         self.batch_size = batch_size
         self.memory = EpisodeLearnerStore(self.buffer_size, self.batch_size)
-
+        self.score = 0
+        self.best_score = 0
         # Algorithm parameters
         self.gamma = gamma  # discount factor
         self.tau = tau  # for soft update of target parameters
@@ -49,12 +50,11 @@ class DDPG():
         self.last_state = state
         return state
 
-    def step(self, action, reward, next_state, done):
-         # Save experience / reward
+    def step(self, reward, done, action, next_state):
         self.memory.add(self.last_state, action, reward, next_state, done)
 
         # Learn, if enough samples are available in memory
-        if len(self.memory) > self.batch_size:
+        if len(self.memory) > self.batch_size or done:
             experiences = self.memory.sample()
             self.learn(experiences)
 
@@ -76,6 +76,9 @@ class DDPG():
         rewards = np.array([e.reward for e in experiences if e is not None]).astype(np.float32).reshape(-1, 1)
         dones = np.array([e.done for e in experiences if e is not None]).astype(np.uint8).reshape(-1, 1)
         next_states = np.vstack([e.next_state for e in experiences if e is not None])
+
+        self.score = rewards.max()
+        self.best_score = max(self.best_score, self.score)
 
         actions_next = self.actor_target.model.predict_on_batch(next_states)
         Q_targets_next = self.critic_target.model.predict_on_batch([next_states, actions_next])

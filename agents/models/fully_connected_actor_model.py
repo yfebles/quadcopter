@@ -23,7 +23,7 @@ class FullyConnectedActorModel:
 
         # Define optimizer and training function
         optimizer = optimizers.Adam()
-        updates_op = optimizer.get_updates(params=self.model.trainable_weights, loss=loss)
+        updates_op = optimizer.get_updates(params=self.model.trainable_weights, loss=loss, constraints=[])
         self.train_fn = keras_backend.function(inputs=[self.model.input, gradients, keras_backend.learning_phase()],
                                                outputs=[], updates=updates_op)
 

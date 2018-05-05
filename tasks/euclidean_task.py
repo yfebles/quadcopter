@@ -7,6 +7,18 @@ class EuclideanTask(Task):
         Task.__init__(self, init_pose=init_pose, init_velocities=init_velocities,
                       init_angle_velocities=init_angle_velocities, runtime=runtime, target_pos=target_pos)
 
+        position = self.sim.pose[0:3]
+        self.init_distance =  self._get_distance(position)
+
+    def _get_distance(self, position):
+        return sum([abs(position[i] - self.target_pos[i]) ** 2 for i in range(0, 3)])
+
+
     def get_reward(self):
-        """Uses current pose of sim to return reward."""
-        return 1.-.3*(abs(self.sim.pose[:3] - self.target_pos)).sum()
+        """
+        Euclidean based reward. Closer to the target but included instability on rotors as penalized behavior.
+        :return:
+        """
+        position = self.sim.pose[0:3]
+        distance = self._get_distance(position) * 1.0
+        return 1 - (self.init_distance - distance) / self.init_distance
