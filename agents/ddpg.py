@@ -16,11 +16,11 @@ class DDPG():
         self.action_low = task.action_low
         self.action_high = task.action_high
 
-        # Actor (Policy) Model
+        # Actor  Model
         self.actor_local = FullyConnectedActorModel(self.state_size, self.action_size, self.action_low, self.action_high, actor_learning_rate)
         self.actor_target = FullyConnectedActorModel(self.state_size, self.action_size, self.action_low, self.action_high, actor_learning_rate)
 
-        # Critic (Value) Model
+        # Critic Model
         self.critic_local = DoubleFullyConnctedlayersCriticModel(self.state_size, self.action_size, critic_learning_rate)
         self.critic_target = DoubleFullyConnctedlayersCriticModel(self.state_size, self.action_size, critic_learning_rate)
 
